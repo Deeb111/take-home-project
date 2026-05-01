@@ -1,14 +1,14 @@
 console.log("Starting server...");
-const express = require("express");
-const mongoose = require("mongoose");
-const dotenv = require("dotenv");
-dotenv.config();
+const express = require("express"); //load express
+const mongoose = require("mongoose"); //load mongoose
+const dotenv = require("dotenv"); //load dotenv
+dotenv.config(); //execute dotenv making variables available
 
-const app = express();
+const app = express(); //create express instance
 
-app.use(express.json());
+app.use(express.json()); //tell express to parse json request bodies
 
-mongoose.connect(process.env.MONGO_URI)
+mongoose.connect(process.env.MONGO_URI) //connect to MongoDB using .env connection string
     .then(() => console.log("MongoDB Connected"))
     .catch(err => console.error(err));
 
