@@ -1,7 +1,6 @@
 const express = require("express");
 const Room = require("../models/Room.js");
 const User = require("../models/User.js");
-const auth = require("../middleware/auth.js");
 const router = express.Router();
 
 
@@ -18,7 +17,7 @@ router.get("/allrooms", async (req, res) =>{
 });
 
 //gets single room by room id
-router.get("/rooms/:room_id", async (req, res) =>{
+router.get("/getroom/:room_id", async (req, res) =>{
     try{
         const {room_id} = req.params;
         const room = await Room.findOne({room_id: room_id});
@@ -26,7 +25,7 @@ router.get("/rooms/:room_id", async (req, res) =>{
         if(!room){
             return res.status(404).json({msg: "Room not found"});
         }
-        res.status(200).json(rooms);
+        res.status(200).json(room);
     }
     catch (err){
         res.status(500).json({msg: "Server error"});
@@ -34,17 +33,22 @@ router.get("/rooms/:room_id", async (req, res) =>{
 });
 
 //create new room, must be an admin
-router.post("/newroom/:username/:name/:capacity", async (req, res) =>{
+router.post("/newroom/:username/:room_id/:name/:capacity", async (req, res) =>{
     try{
-        const {username, name, capacity} = req.params;
+        const {username, room_id, name, capacity} = req.params;
         const {operatingHours} = req.body;
-        const user = await User.findOne({ username: username });
+        const user = await User.findOne({username: username});
+
+        if (!user){
+            return res.status(404).json({msg: "User not found"});
+        }
 
         if (user.role !== "admin"){
             return res.status(403).json({msg: "Admin use only"});
         }
 
         const room = new Room({
+            room_id,
             name,
             capacity,
             operatingHours
@@ -52,11 +56,65 @@ router.post("/newroom/:username/:name/:capacity", async (req, res) =>{
 
         await room.save();
 
-        res.status().json({msg: "Room created successfully"});
+        res.status(201).json({msg: "Room created successfully"});
     }
     catch (err){
         res.status(500).json({msg: "Server error"});
     }    
 });
+
+//edit rooms, must be admin
+router.put("/editroom/:username/:room_id/:name/:capacity", async (req, res) =>{
+    try{
+        const {username, room_id, name, capacity} = req.params;
+        const {operatingHours} = req.body;
+        const user = await User.findOne({username: username});
+
+        if (!user){
+            return res.status(404).json({msg: "User not found"});
+        }
+
+        if (user.role !== "admin"){
+            return res.status(403).json({msg: "Admin use only"});
+        }
+
+        const room = await Room.findOneAndUpdate({room_id: room_id}, {name, capacity, operatingHours}, {new: true});
+
+        if (!room){
+            return res.status(404).json({msg: "Room not found"});
+        }
+        res.status(200).json(room);
+    }
+    catch (err){
+        res.status(500).json({msg: "Server error"});
+    }
+});
+
+//delete rooms, must be admin
+router.delete("/deleteroom/:username/:room_id", async (req, res) =>{
+    try{
+        const {username, room_id} = req.params;
+        const user = await User.findOne({username: username});
+
+        if (!user){
+            return res.status(404).json({msg: "User not found"});
+        }
+
+        if (user.role !== "admin"){
+            return res.status(403).json({msg: "Admin use only"});
+        }
+
+        const room = await Room.findOneAndDelete({room_id: room_id});
+
+        if (!room){
+            return res.status(404).json({msg: "Room not found"});
+        }
+
+        res.status(200).json({ msg: "Room deleted successfully" });
+    }
+    catch (err){
+        res.status(500).json({msg: "Server error"});
+    }
+})
 
 module.exports = router;
