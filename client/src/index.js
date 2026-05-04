@@ -1,7 +1,7 @@
-const React = require("React");
-const ReactDOM = require("react-dom/client");
-const {BrowserRouter} = require("react-router-dom");
-const App = require("./App.js");
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { BrowserRouter } from "react-router-dom";
+import App from "./App";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

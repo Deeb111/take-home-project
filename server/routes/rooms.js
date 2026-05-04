@@ -2,7 +2,7 @@ const express = require("express");
 const Room = require("../models/Room.js");
 const User = require("../models/User.js");
 const auth = require("../middleware/auth.js");
-const router = express.router();
+const router = express.Router();
 
 
 //gets all rooms, usable by all user roles
@@ -18,9 +18,10 @@ router.get("/rooms", async (req, res) =>{
 });
 
 //gets single room by room id
-router.get("/rooms/:id", async (req, res) =>{
+router.get("/rooms/:room_id", async (req, res) =>{
     try{
-        const room = await Room.findById(req.params.id);
+        const {room_id} = req.params;
+        const room = await Room.findOne({room_id: room_id});
 
         if(!room){
             return res.status(404).json({msg: "Room not found"});
@@ -57,3 +58,5 @@ router.post("/newroom/:username/:name/:capacity", async (req, res) =>{
         res.status(500).json({msg: "Server error"});
     }    
 });
+
+module.exports = router;

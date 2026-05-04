@@ -1,11 +1,10 @@
 console.log("Starting server...");
-//load express
 const express = require("express"); 
-//load mongoose
 const mongoose = require("mongoose"); 
-//load dotenv
 const dotenv = require("dotenv"); 
-//execute dotenv making variables available
+
+const authRoutes = require("./routes/auth");
+const roomsRoutes = require("./routes/rooms");
 dotenv.config(); 
 
 //create express instance
@@ -18,5 +17,8 @@ app.use(express.json());
 mongoose.connect(process.env.MONGO_URI) 
     .then(() => console.log("MongoDB Connected"))
     .catch(err => console.error(err));
+
+app.use("/routes/auth", authRoutes);
+app.use("/routes/rooms", roomsRoutes);
 
 app.listen(5000, "0.0.0.0", () => console.log("Server running at port 5000"));
