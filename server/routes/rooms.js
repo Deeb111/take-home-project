@@ -6,7 +6,7 @@ const router = express.Router();
 
 
 //gets all rooms, usable by all user roles
-router.get("/rooms", async (req, res) =>{
+router.get("/allrooms", async (req, res) =>{
     try{
         const rooms = await Room.find();
 
