@@ -3,7 +3,7 @@ const Booking = require("../models/Booking.js");
 const User = require("../models/User.js");
 const Room = require("../models/Room.js");
 const router = express.Router();
-
+const {initSocket, liveUpdate} = require ("../socket.js")
 //create new booking
 router.post("/newbooking/:username/:room_id", async (req, res) =>{
     try{
@@ -38,7 +38,7 @@ router.post("/newbooking/:username/:room_id", async (req, res) =>{
             return res.status(400).json({msg: "Booking is outside operating hours"});
         }
 
-        const conflict = await Booking.findOne({room_id, status: {$in: ["tentative", "confirmed"]}, $or: [{startTime: {$lt: end}, endTime: {$gt: start}}]});
+        const conflict = await Booking.findOne({room: room._id, status: {$in: ["tentative", "confirmed"]}, $or: [{startTime: {$lt: end}, endTime: {$gt: start}}]});
 
         if (conflict){
             return res.status(400).json({msg: "Room is already booked for this time"});
@@ -94,6 +94,7 @@ router.put("/confirmbooking/:username/:booking_id", async (req, res) => {
         res.status(200).json(booking);
     } 
     catch (err){
+        console.log(err);
         res.status(500).json({ msg: "Server error"});
     }
 });

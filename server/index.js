@@ -7,10 +7,13 @@ const authRoutes = require("./routes/auth");
 const roomsRoutes = require("./routes/rooms");
 const bookingRoutes = require("./routes/bookings");
 const Booking = require("./models/Booking");
+const {initSocket} = require("./socket");
+const {createServer} = require("node:http");
 dotenv.config(); 
 
 //create express instance
 const app = express(); 
+const server = createServer(app);
 
 //tell express to parse json request bodies
 app.use(express.json()); 
@@ -32,4 +35,6 @@ setInterval(async() =>{
     );
 }, 60* 1000);
 
-app.listen(5000, "0.0.0.0", () => console.log("Server running at port 5000"));
+
+initSocket(server);
+server.listen(5000, () => console.log("Server running at port 5000"));
