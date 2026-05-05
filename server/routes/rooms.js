@@ -115,6 +115,6 @@ router.delete("/deleteroom/:username/:room_id", async (req, res) =>{
     catch (err){
         res.status(500).json({msg: "Server error"});
     }
-})
+});
 
 module.exports = router;

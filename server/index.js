@@ -5,6 +5,7 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const authRoutes = require("./routes/auth");
 const roomsRoutes = require("./routes/rooms");
+const bookingRoutes = require("./routes/bookings");
 dotenv.config(); 
 
 //create express instance
@@ -20,5 +21,6 @@ mongoose.connect(process.env.MONGO_URI)
 
 app.use("/routes/auth", authRoutes);
 app.use("/routes/rooms", roomsRoutes);
+app.use("/routes/bookings", bookingRoutes);
 
 app.listen(5000, "0.0.0.0", () => console.log("Server running at port 5000"));
