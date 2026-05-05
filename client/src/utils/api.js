@@ -1,13 +1,14 @@
+// get all rooms
 export async function getRooms(){
     const res = await fetch("http://localhost:5000/routes/rooms/allrooms");
     return res.json();
 }
-
+// get room by id
 export async function getRoom(room_id){
     const res = await fetch(`http://localhost:5000/api/rooms/getroom/${room_id}`);
     return res.json();
 }
-
+// create new room
 export async function createRoom(username, room_id, name, capacity, operatingHours){
     const res = await fetch(`http://localhost:5000/api/rooms/newroom/${username}/${room_id}/${name}/${capacity}`,{
         method: "POST",
@@ -16,7 +17,7 @@ export async function createRoom(username, room_id, name, capacity, operatingHou
     });
     return res.json();
 }
-
+// edit room
 export async function editRoom(username, room_id, name, capacity, operatingHours){
     const res = await fetch(`http://localhost:5000/api/rooms/editroom/${username}/${room_id}/${name}/${capacity}`,{
         method: "PUT",
@@ -25,7 +26,7 @@ export async function editRoom(username, room_id, name, capacity, operatingHours
     });
     return res.json();
 }
-
+// delete room
 export async function deleteRoom(username, room_id){
     const res = await fetch(`http://localhost:5000/api/rooms/deleteroom/${username}/${room_id}`,{
         method: "DELETE"

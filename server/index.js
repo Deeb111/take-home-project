@@ -6,6 +6,7 @@ const cors = require("cors");
 const authRoutes = require("./routes/auth");
 const roomsRoutes = require("./routes/rooms");
 const bookingRoutes = require("./routes/bookings");
+const Booking = require("./models/Booking");
 dotenv.config(); 
 
 //create express instance
@@ -22,5 +23,13 @@ mongoose.connect(process.env.MONGO_URI)
 app.use("/routes/auth", authRoutes);
 app.use("/routes/rooms", roomsRoutes);
 app.use("/routes/bookings", bookingRoutes);
+
+//runs every 1 minute, in milliseconds to cancel expired tentative bookings
+setInterval(async() =>{
+    await Booking.updateMany(
+        {status: "tentative", holdTime:{$lt: new Date()}},
+        {status: "canceled"}
+    );
+}, 60* 1000);
 
 app.listen(5000, "0.0.0.0", () => console.log("Server running at port 5000"));
