@@ -169,4 +169,35 @@ router.get("/mybookings/:username", async (req, res) =>{
     }
 });
 
+//edit bookings for user
+router.put("/editbooking/:username/:booking_id", async (req, res) =>{
+    try{
+        const {username, booking_id} = req.params;
+        const {startTime, endTime} = req.body;
+
+        const user = await User.findOne({username});
+        if(!user){
+            return res.status(404).json({msg: "User not found"});
+        }
+
+        const booking = await Booking.findById(booking_id);
+        if(!booking){
+            return res.status(404).json({msg: "Booking not found"});
+        }
+
+        if(booking.user.toString() !== user._id.toString()){
+            return res.status(403).json({msg: "Not your booking"});
+        }
+
+        booking.startTime = startTime;
+        booking.endTime = endTime;
+        await booking.save();
+
+        res.status(200).json(booking);
+    }
+    catch(err){
+        res.status(500).json({msg: "Server error"});
+    }
+});
+
 module.exports = router;

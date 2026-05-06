@@ -1,8 +1,11 @@
 import React, {useState, useEffect} from "react";
-import {getMyBookings, confirmBooking, cancelBooking} from "../utils/api";
+import {getMyBookings, confirmBooking, cancelBooking, editBooking} from "../utils/api";
 
 function MyBookings(){
     const [bookings, setBookings] = useState([]);
+    const [editingId, setEditingId] = useState(null);
+    const [newStart, setNewStart] = useState("");
+    const [newEnd, setNewEnd] = useState("");
     const username = localStorage.getItem("username");
 
     useEffect(() =>{
@@ -28,6 +31,13 @@ function MyBookings(){
         setBookings(data);
     }
 
+    async function handleEdit(booking_id){
+        await editBooking(username, booking_id, newStart, newEnd);
+        setEditingId(null);
+        const data = await getMyBookings(username);
+        setBookings(data);
+    }
+
     return(
         <div>
             <h2>My Bookings</h2>
@@ -44,6 +54,17 @@ function MyBookings(){
                     )}
                     {booking.status !== "canceled" && (
                         <button onClick={() => handleCancel(booking._id)}>Cancel</button>
+                    )}
+                    {booking.status !== "canceled" && (
+                        <button onClick = {() => setEditingId(booking._id)}>Edit</button>
+                    )}
+                    {editingId === booking._id &&(
+                        <div>
+                            <input type = "datetime-local" value = {newStart} onChange = {(e) => setNewStart(e.target.value)}/>
+                            <input type = "datetime-local" value = {newEnd} onChange = {(e) => setNewEnd(e.target.value)}/>
+                            <button onClick = {() => handleEdit(booking._id)}>Save</button>
+                            <button onClick = {() => setEditingId(null)}>Close</button>
+                        </div>
                     )}
                     <hr/>
                 </div>

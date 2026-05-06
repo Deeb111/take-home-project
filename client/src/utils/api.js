@@ -71,7 +71,7 @@ export async function getMyBookings(username){
     const res = await fetch(`http://localhost:5000/routes/bookings/mybookings/${username}`);
     return res.json();
 }
-
+//login user
 export async function logInUser(username, password){
     const res = await fetch("http://localhost:5000/routes/auth/login", {
         method: "POST",
@@ -80,12 +80,22 @@ export async function logInUser(username, password){
     });
     return res.json();
 }
-
+// register user
 export async function registerUser(username, password){
     const res = await fetch("http://localhost:5000/routes/auth/register", {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
+    });
+    return res.json();
+}
+
+//edit a booking
+export async function editBooking(username, booking_id, startTime, endTime){
+    const res = await fetch(`http://localhost:5000/routes/bookings/editbooking/${username}/${booking_id}`,{
+        method: "PUT",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({startTime, endTime})
     });
     return res.json();
 }
