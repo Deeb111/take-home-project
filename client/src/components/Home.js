@@ -1,27 +1,13 @@
-import React, {useEffect, useState} from "react";
-import {getRooms} from "../utils/api";
+import React from "react";
 
 function Home(){
-    const [rooms, setRooms] = useState([]);
-    useEffect(() =>{
-        async function loadRooms(){
-            const res = await getRooms();
-            setRooms(res);
-        }
-        loadRooms();
-    }, []);
-
     return(
         <div>
-            {rooms.map(room => (
-                <div key={room.room_id}>
-                    <p>{room.name}</p>
-                    <p>{room.capacity}</p>
-                    <p>{room.operatingHours.open}</p>
-                    <p>{room.operatingHours.close}</p>
-                    <p>{room.operatingHours.days}</p>
-                </div>
-            ))}
+           <h1>Room Booking System</h1>
+            <a href="/rooms"><button>Browse Rooms</button></a>
+            <a href="/mybookings"><button>My Bookings</button></a>
+            <a href="/login"><button>Login</button></a>
+            <a href="/register"><button>Register</button></a>
         </div>
     );
 }

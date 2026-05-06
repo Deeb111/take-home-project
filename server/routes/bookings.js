@@ -3,7 +3,7 @@ const Booking = require("../models/Booking.js");
 const User = require("../models/User.js");
 const Room = require("../models/Room.js");
 const router = express.Router();
-const {initSocket, liveUpdate} = require ("../socket.js")
+const {liveUpdate} = require ("../socket.js")
 //create new booking
 router.post("/newbooking/:username/:room_id", async (req, res) =>{
     try{
@@ -34,7 +34,9 @@ router.post("/newbooking/:username/:room_id", async (req, res) =>{
         const openMinutes = parseInt(room.operatingHours.open.split(":")[0]) * 60 + parseInt(room.operatingHours.open.split(":")[1]);
         const closeMinutes = parseInt(room.operatingHours.close.split(":")[0]) * 60 + parseInt(room.operatingHours.close.split(":")[1]);
 
-        if (startHour < openMinutes || endHour > closeMinutes){
+        console.log(startHour, openMinutes, closeMinutes);
+
+        if (startHour < openMinutes || startHour >= closeMinutes || endHour > closeMinutes || endHour <= openMinutes){
             return res.status(400).json({msg: "Booking is outside operating hours"});
         }
 
@@ -56,6 +58,7 @@ router.post("/newbooking/:username/:room_id", async (req, res) =>{
         });
 
         await booking.save();
+        liveUpdate(room_id, booking);
         res.status(201).json(booking);
     }
     catch (err){
@@ -120,7 +123,7 @@ router.put("/cancelbooking/:username/:booking_id", async (req, res) => {
 
         booking.status = "canceled";
         await booking.save();
-
+        liveUpdate(room_id, booking);
         res.status(200).json(booking);
     } 
     catch (err){
